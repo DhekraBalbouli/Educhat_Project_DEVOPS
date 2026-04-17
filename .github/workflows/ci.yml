@@ -1,0 +1,277 @@
+# ═══════════════════════════════════════════════════════════════════
+# .github/workflows/ci.yml
+# Pipeline CI — EduChat
+#
+# Ce pipeline se déclenche à chaque push ou Pull Request.
+# Il exécute 4 jobs dans l'ordre :
+#
+#   Job 1 → Vérification syntaxe  (Python + JS + C)
+#   Job 2 → Qualité du code       (flake8 + black)
+#   Job 3 → Tests unitaires       (pytest)
+#   Job 4 → Tests d'intégration   (API FastAPI)
+#
+# Si un job échoue, les suivants sont bloqués.
+# ═══════════════════════════════════════════════════════════════════
+
+name: CI — EduChat
+
+# ── Déclencheurs ─────────────────────────────────────────────────────
+on:
+  push:
+    branches:
+      - main
+      - dev
+  pull_request:
+    branches:
+      - main
+      - develop
+
+# ═══════════════════════════════════════════════════════════════════
+# JOB 1 — VÉRIFICATION SYNTAXE
+#
+# Vérifie que le code Python, JavaScript et C
+# ne contient pas d'erreurs de syntaxe basiques,
+# SANS exécuter le code.
+# ═══════════════════════════════════════════════════════════════════
+jobs:
+  verification-syntaxe:
+    name: "Vérification syntaxe (Python + JS + C)"
+    runs-on: ubuntu-latest
+
+    steps:
+
+      # ── Étape 1 : Récupérer le code depuis GitHub ──────────────────
+      - name: Récupérer le code
+        uses: actions/checkout@v4
+
+      # ── Étape 2 : Installer Python ─────────────────────────────────
+      - name: Installer Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      # ── Étape 3 : Vérification syntaxe Python ──────────────────────
+      # py_compile vérifie si le fichier .py est syntaxiquement correct
+      # sans l'exécuter. C'est l'équivalent de "est-ce que ça compile ?"
+      - name: Syntaxe Python — fichiers principaux
+        run: |
+          echo "=== Vérification syntaxe Python ==="
+          python -m py_compile main.py
+          echo "---------------------- main.py — OK-----------------------"
+
+          python -m py_compile mon_chatbot.py
+          echo "-------------------mon_chatbot.py — OK-----------------------------"
+
+      - name: Syntaxe Python — package chatbot/
+        run: |
+          echo "=== Vérification syntaxe chatbot/ ==="
+          for fichier in chatbot/*.py; do
+            python -m py_compile "$fichier"
+            echo "---------------------✅ $fichier — OK------------------------------"
+          done
+
+      - name: Syntaxe Python — package api/
+        run: |
+          echo "=== Vérification syntaxe api/ ==="
+          for fichier in api/*.py; do
+            python -m py_compile "$fichier"
+            echo "----------------------------------✅ $fichier — OK-------------------------------------"
+          done
+
+      - name: Syntaxe Python — dossier tests/
+        run: |
+          echo "=== Vérification syntaxe tests/ ==="
+          for fichier in tests/*.py; do
+            python -m py_compile "$fichier"
+            echo "✅ $fichier — OK"
+          done
+
+      # ── Étape 4 : Vérification syntaxe JavaScript ──────────────────
+      # Node.js est déjà installé sur ubuntu-latest.
+      # "node --check" vérifie la syntaxe sans exécuter le code.
+      - name: Installer Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Syntaxe JavaScript — dossier static/
+        run: |
+          echo "=== Vérification syntaxe JavaScript ==="
+          JS_FILES=$(find static/ -name "*.js" 2>/dev/null)
+
+          if [ -z "$JS_FILES" ]; then
+            echo "ℹ️ Aucun fichier .js trouvé dans static/"
+          else
+            for fichier in $JS_FILES; do
+              node --check "$fichier"
+              echo "----------------------------------------- $fichier — OK------------------------------------------------"
+            done
+          fi
+
+# ═══════════════════════════════════════════════════════════════════
+# JOB 2 — QUALITÉ DU CODE PYTHON
+#
+# Vérifie que le code Python respecte les conventions :
+#   - flake8  : détecte les erreurs et mauvaises pratiques
+#   - black   : vérifie le formatage du code
+# ═══════════════════════════════════════════════════════════════════
+  qualite-code:
+    name: "Qualité du code Python (flake8 + black)"
+    runs-on: ubuntu-latest
+    needs: verification-syntaxe   # ne démarre que si Job 1 passe
+
+    steps:
+
+      - name: Récupérer le code
+        uses: actions/checkout@v4
+
+      - name: Installer Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      # ── Étape : Installer les outils de qualité ────────────────────
+      - name: Installer flake8 et black
+        run: |
+          pip install --upgrade pip
+          pip install flake8 black
+
+      # ── Étape : Flake8 ─────────────────────────────────────────────
+      # flake8 vérifie :
+      #   - les erreurs Python (variables non définies, imports manquants)
+      #   - le respect de PEP8 (style officiel Python)
+      #   - les lignes trop longues
+      - name: Flake8 — vérification erreurs et style
+        run: |
+          echo "=== Analyse flake8 ==="
+          flake8 chatbot/ api/ main.py mon_chatbot.py \
+            --max-line-length=100 \
+            --exclude=__pycache__,venv,.venv \
+            --statistics \
+            --count
+          echo "✅ Flake8 — aucune erreur"
+
+      # ── Étape : Black ──────────────────────────────────────────────
+      # black vérifie que le code est formaté de manière uniforme.
+      # "--check" ne modifie rien, il signale juste les problèmes.
+      - name: Black — vérification formatage
+        run: |
+          echo "=== Vérification formatage black ==="
+          black --check --diff \
+            chatbot/ api/ main.py mon_chatbot.py
+          echo "✅ Black — formatage correct"
+
+      # ── Étape : Rapport de complexité (bonus) ─────────────────────
+      # radon mesure la complexité cyclomatique des fonctions.
+      # Une fonction trop complexe est difficile à maintenir.
+      - name: Radon — complexité du code
+        run: |
+          pip install radon
+          echo "=== Complexité cyclomatique ==="
+          radon cc chatbot/ api/ main.py -s -a
+          echo ""
+          echo "=== Indice de maintenabilité ==="
+          radon mi chatbot/ api/ main.py -s
+        continue-on-error: true   # Ce job n'échoue pas si radon signale des problèmes
+                                  # C'est informatif uniquement pour les étudiants
+
+# ═══════════════════════════════════════════════════════════════════
+# JOB 3 — TESTS UNITAIRES
+#
+# Lance les tests sur les fonctions individuelles :
+#   - nettoyer_texte(), detecter_langage()
+#   - executer_et_capturer_sortie()
+#   - structure du corpus YAML
+# ═══════════════════════════════════════════════════════════════════
+  tests-unitaires:
+    name: "Tests unitaires (pytest)"
+    runs-on: ubuntu-latest
+    needs: qualite-code   # ne démarre que si Job 2 passe
+
+    steps:
+
+      - name: Récupérer le code
+        uses: actions/checkout@v4
+
+      - name: Installer Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Installer les dépendances
+        run: |
+          pip install --upgrade pip
+          pip install -r requirment.txt
+          pip install pytest pytest-cov
+
+      # ── Étape : Tests unitaires uniquement ────────────────────────
+      # On lance seulement les tests qui ne touchent pas à l'API.
+      # Ces tests sont rapides et ne nécessitent pas de serveur.
+      - name: Lancer les tests unitaires
+        run: |
+          echo "=== Tests unitaires ==="
+          pytest tests/test_text_utils.py \
+                 tests/test_executor.py \
+                 tests/test_corpus.py \
+                 tests/test_quiz.py \
+                 tests/test_brain.py \
+                 -v \
+                 --tb=short \
+                 --cov=chatbot \
+                 --cov-report=term-missing
+
+      # ── Étape : Sauvegarder le rapport de coverage ─────────────────
+      - name: Sauvegarder le rapport coverage
+        uses: actions/upload-artifact@v4
+        if: always()   # même si les tests échouent
+        with:
+          name: rapport-coverage-unitaires
+          path: .coverage
+
+# ═══════════════════════════════════════════════════════════════════
+# JOB 4 — TESTS D'INTÉGRATION
+#
+# Lance les tests sur les routes HTTP de l'API FastAPI.
+# Ces tests vérifient que tous les composants fonctionnent ensemble.
+# ═══════════════════════════════════════════════════════════════════
+  tests-integration:
+    name: "Tests d'intégration (API FastAPI)"
+    runs-on: ubuntu-latest
+    needs: tests-unitaires   # ne démarre que si Job 3 passe
+
+    steps:
+
+      - name: Récupérer le code
+        uses: actions/checkout@v4
+
+      - name: Installer Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Installer les dépendances
+        run: |
+          pip install --upgrade pip
+          pip install -r requirment.txt
+          pip install pytest pytest-cov httpx
+
+      # ── Étape : Tests d'intégration API ──────────────────────────
+      - name: Lancer les tests d'intégration
+        run: |
+          echo "=== Tests d'intégration API ==="
+          pytest tests/test_api.py \
+                 -v \
+                 --tb=short \
+                 --cov=api \
+                 --cov=main \
+                 --cov-report=term-missing
+
+
+      # ── Étape : Rapport coverage global ───────────────────────────
+      - name: Coverage globale (tous les modules)
+        run: |
+          echo "=== Coverage globale ==="
+          pytest tests/ -v 
