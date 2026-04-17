@@ -120,7 +120,7 @@ jobs:
   tests-unitaires:
     name: "Tests unitaires (pytest)"
     runs-on: ubuntu-latest
-    needs: qualite-code   # ne démarre que si Job 2 passe
+    needs: verification-syntaxe   # ne démarre que si Job 2 passe
 
     steps:
 
@@ -218,7 +218,7 @@ jobs:
   qualite-code:
     name: "Qualité du code Python (flake8 + black)"
     runs-on: ubuntu-latest
-    needs: verification-syntaxe   # ne démarre que si Job 1 passe
+    needs: tests-integration   # ne démarre que si Job 1 passe
 
     steps:
 
