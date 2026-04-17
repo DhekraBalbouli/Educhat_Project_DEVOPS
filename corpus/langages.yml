@@ -3,6 +3,10 @@ langages:
   c:
     conversations:
       - question: "Qu'est-ce que le langage C ?"
+        answers:
+          - "C est un langage de programmation bas niveau très utilisé pour les systèmes d'exploitation, les pilotes, et les logiciels embarqués."
+          - "C est un langage de bas niveau très performant, idéal pour manipuler la mémoire et écrire des programmes proches du matériel."
+          - "Le langage C a été créé dans les années 1970, et il reste populaire pour sa vitesse et sa proximité avec le système d’exploitation."
       - question: "definir le langage c?"           
         answers:
           - "C est un langage de programmation bas niveau très utilisé pour les systèmes d'exploitation, les pilotes, et les logiciels embarqués."
@@ -40,6 +44,8 @@ langages:
         answers:
           - "for (int i = 0; i < 10; i++) { /* instructions */ }"
       - question: "Comment afficher un message à l'écran en C ?"
+        answers:
+          - "On utilise printf(). Exemple : printf(\"Bonjour !\\n\");"
       - question: "a qoi sert l utilisation de printf en c"
         answers:
           - "On utilise printf(). Exemple : printf(\"Bonjour !\\n\");"
@@ -301,4 +307,4 @@ langages:
     exercices:
        - enonce: "Écris un code JavaScript qui affiche 'Hello'"
          solution: "Hello"
-         
+  
