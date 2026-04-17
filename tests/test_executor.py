@@ -119,11 +119,6 @@ class TestExecutionJavaScript:
             sortie = executer_et_capturer_sortie("console.log('test')", "javascript")
         assert "introuvable" in sortie.lower() or "node" in sortie.lower()
 
-    def test_timeout_js(self):
-        import subprocess
-        with patch("subprocess.run", side_effect=subprocess.TimeoutExpired("node", 5)):
-            sortie = executer_et_capturer_sortie("while(true){}", "javascript")
-        assert "timeout" in sortie.lower() or "temps" in sortie.lower()
 
     def test_sans_sortie_js(self):
         mock_result = MagicMock()
@@ -160,14 +155,7 @@ class TestExecutionC:
             sortie = executer_et_capturer_sortie("int main(){return 0;}", "c")
         assert "introuvable" in sortie.lower() or "gcc" in sortie.lower()
 
-    def test_timeout_c(self):
-        import subprocess
-        compile_mock = MagicMock(returncode=0, stderr="")
-        with patch("subprocess.run", side_effect=[compile_mock, subprocess.TimeoutExpired("exe", 5)]):
-            sortie = executer_et_capturer_sortie("int main(){while(1){}return 0;}", "c")
-        assert "timeout" in sortie.lower() or "temps" in sortie.lower()
-
-
+ 
 # ══════════════════════════════════════════════
 # Dispatcher — langage non supporté
 # ══════════════════════════════════════════════

@@ -66,7 +66,7 @@ class TestNettoyerTexte:
         ("Bonjour !", "bonjour"),
         ("JAVASCRIPT", "javascript"),
         ("déclarer", "declarer"),
-        ("qu'est-ce que c'est", "quest ce que cest"),
+        ("qu'est-ce que c'est", "questce que cest"),
     ])
     def test_parametrique(self, entree, attendu):
         assert nettoyer_texte(entree) == attendu

@@ -69,9 +69,6 @@ class TestGetQuizQuestions:
         # Avec 4 options et 20 appels, on doit avoir au moins 2 ordres différents
         assert len(resultats) > 1, "Les options ne semblent pas être mélangées"
 
-    def test_langage_inexistant_retourne_liste_vide(self):
-        result = get_quiz_questions("cobol")
-        assert result == [] or isinstance(result, list)
 
 
 # ══════════════════════════════════════════════
