@@ -108,73 +108,6 @@ jobs:
             done
           fi
 
-# ═══════════════════════════════════════════════════════════════════
-# JOB 2 — QUALITÉ DU CODE PYTHON
-#
-# Vérifie que le code Python respecte les conventions :
-#   - flake8  : détecte les erreurs et mauvaises pratiques
-#   - black   : vérifie le formatage du code
-# ═══════════════════════════════════════════════════════════════════
-  qualite-code:
-    name: "Qualité du code Python (flake8 + black)"
-    runs-on: ubuntu-latest
-    needs: verification-syntaxe   # ne démarre que si Job 1 passe
-
-    steps:
-
-      - name: Récupérer le code
-        uses: actions/checkout@v4
-
-      - name: Installer Python 3.11
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-          cache: "pip"
-
-      # ── Étape : Installer les outils de qualité ────────────────────
-      - name: Installer flake8 et black
-        run: |
-          pip install --upgrade pip
-          pip install flake8 black
-
-      # ── Étape : Flake8 ─────────────────────────────────────────────
-      # flake8 vérifie :
-      #   - les erreurs Python (variables non définies, imports manquants)
-      #   - le respect de PEP8 (style officiel Python)
-      #   - les lignes trop longues
-      - name: Flake8 — vérification erreurs et style
-        run: |
-          echo "=== Analyse flake8 ==="
-          flake8 chatbot/ api/ main.py mon_chatbot.py \
-            --max-line-length=100 \
-            --exclude=__pycache__,venv,.venv \
-            --statistics \
-            --count
-          echo "✅ Flake8 — aucune erreur"
-
-      # ── Étape : Black ──────────────────────────────────────────────
-      # black vérifie que le code est formaté de manière uniforme.
-      # "--check" ne modifie rien, il signale juste les problèmes.
-      - name: Black — vérification formatage
-        run: |
-          echo "=== Vérification formatage black ==="
-          black --check --diff \
-            chatbot/ api/ main.py mon_chatbot.py
-          echo "✅ Black — formatage correct"
-
-      # ── Étape : Rapport de complexité (bonus) ─────────────────────
-      # radon mesure la complexité cyclomatique des fonctions.
-      # Une fonction trop complexe est difficile à maintenir.
-      - name: Radon — complexité du code
-        run: |
-          pip install radon
-          echo "=== Complexité cyclomatique ==="
-          radon cc chatbot/ api/ main.py -s -a
-          echo ""
-          echo "=== Indice de maintenabilité ==="
-          radon mi chatbot/ api/ main.py -s
-        continue-on-error: true   # Ce job n'échoue pas si radon signale des problèmes
-                                  # C'est informatif uniquement pour les étudiants
 
 # ═══════════════════════════════════════════════════════════════════
 # JOB 3 — TESTS UNITAIRES
@@ -275,3 +208,70 @@ jobs:
         run: |
           echo "=== Coverage globale ==="
           pytest tests/ -v 
+# ═══════════════════════════════════════════════════════════════════
+# JOB 2 — QUALITÉ DU CODE PYTHON
+#
+# Vérifie que le code Python respecte les conventions :
+#   - flake8  : détecte les erreurs et mauvaises pratiques
+#   - black   : vérifie le formatage du code
+# ═══════════════════════════════════════════════════════════════════
+  qualite-code:
+    name: "Qualité du code Python (flake8 + black)"
+    runs-on: ubuntu-latest
+    needs: verification-syntaxe   # ne démarre que si Job 1 passe
+
+    steps:
+
+      - name: Récupérer le code
+        uses: actions/checkout@v4
+
+      - name: Installer Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      # ── Étape : Installer les outils de qualité ────────────────────
+      - name: Installer flake8 et black
+        run: |
+          pip install --upgrade pip
+          pip install flake8 black
+
+      # ── Étape : Flake8 ─────────────────────────────────────────────
+      # flake8 vérifie :
+      #   - les erreurs Python (variables non définies, imports manquants)
+      #   - le respect de PEP8 (style officiel Python)
+      #   - les lignes trop longues
+      - name: Flake8 — vérification erreurs et style
+        run: |
+          echo "=== Analyse flake8 ==="
+          flake8 chatbot/ api/ main.py mon_chatbot.py \
+            --max-line-length=100 \
+            --exclude=__pycache__,venv,.venv \
+            --statistics \
+            --count
+          echo "✅ Flake8 — aucune erreur"
+
+      # ── Étape : Black ──────────────────────────────────────────────
+      # black vérifie que le code est formaté de manière uniforme.
+      # "--check" ne modifie rien, il signale juste les problèmes.
+      - name: Black — vérification formatage
+        run: |
+          echo "=== Vérification formatage black ==="
+          black --check --diff \
+            chatbot/ api/ main.py mon_chatbot.py
+          echo "✅ Black — formatage correct"
+
+      # ── Étape : Rapport de complexité (bonus) ─────────────────────
+      # radon mesure la complexité cyclomatique des fonctions.
+      # Une fonction trop complexe est difficile à maintenir.
+      - name: Radon — complexité du code
+        run: |
+          pip install radon
+          echo "=== Complexité cyclomatique ==="
+          radon cc chatbot/ api/ main.py -s -a
+          echo ""
+          echo "=== Indice de maintenabilité ==="
+          radon mi chatbot/ api/ main.py -s
+        continue-on-error: true   # Ce job n'échoue pas si radon signale des problèmes
+                                  # C'est informatif uniquement pour les étudiants
