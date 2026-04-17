@@ -12,7 +12,13 @@ from typing import Optional, Tuple
 from chatterbot import ChatBot
 from chatterbot.trainers import ListTrainer
 
-from chatbot.config import YAML_PATH, DIFFLIB_CUTOFF, RATIO_MIN, CONFIDENCE_HIGH, CONFIDENCE_MID
+from chatbot.config import (
+    YAML_PATH,
+    DIFFLIB_CUTOFF,
+    RATIO_MIN,
+    CONFIDENCE_HIGH,
+    CONFIDENCE_MID,
+)
 from chatbot.text_utils import nettoyer_texte
 
 # ── Chargement YAML ───────────────────────────────────────────────────────────
@@ -24,7 +30,7 @@ chatbot = ChatBot("EduChat", read_only=False)
 trainer = ListTrainer(chatbot)
 
 # ── Indexation + Entraînement ─────────────────────────────────────────────────
-questions_connues:  list[str] = []
+questions_connues: list[str] = []
 questions_indexees: dict[str, str] = {}
 
 for langage, contenu in data["langages"].items():
@@ -63,7 +69,7 @@ def repondre_question(question: str) -> str:
                             ratio = difflib.SequenceMatcher(
                                 None,
                                 question_nettoyee,
-                                nettoyer_texte(question_originale)
+                                nettoyer_texte(question_originale),
                             ).ratio()
                             if ratio > RATIO_MIN:
                                 return random.choice(conv["answers"])
