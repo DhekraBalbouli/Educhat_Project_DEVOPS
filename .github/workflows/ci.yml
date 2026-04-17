@@ -138,6 +138,10 @@ jobs:
           pip install --upgrade pip
           pip install -r requirements.txt
           pip install pytest pytest-cov
+      
+      - name: Télécharger modèle spaCy
+        run: |
+          python -m spacy download en_core_web_sm
 
       # ── Étape : Tests unitaires uniquement ────────────────────────
       # On lance seulement les tests qui ne touchent pas à l'API.
