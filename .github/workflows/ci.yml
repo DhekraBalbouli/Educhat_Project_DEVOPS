@@ -194,6 +194,10 @@ jobs:
           pip install --upgrade pip
           pip install -r requirements.txt
           pip install pytest pytest-cov httpx
+      
+      - name: Installer spaCy model
+        run: |
+          python -m spacy download en_core_web_sm
 
       # ── Étape : Tests d'intégration API ──────────────────────────
       - name: Lancer les tests d'intégration
