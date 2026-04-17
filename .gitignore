@@ -1,0 +1,50 @@
+# 🔹 Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Environnement virtuel
+venv/
+.env/
+.env
+.env.example
+
+# 🔹 Logs
+*.log
+
+# 🔹 Fichiers temporaires
+*.tmp
+*.temp
+
+# 🔹 Fichiers générés (C)
+*.exe
+*.out
+*.o
+
+# 🔹 Node.js (si tu ajoutes JS plus tard)
+node_modules/
+npm-debug.log*
+
+# 🔹 IDE / Editeurs
+.vscode/
+.idea/
+
+# 🔹 OS
+.DS_Store
+Thumbs.db
+
+# 🔹 Pytest
+.pytest_cache/
+
+# 🔹 Coverage (tests)
+.coverage
+htmlcov/
+
+# 🔹 Secrets (IMPORTANT)
+*.env
+
+# Base de données
+db.sqlite3
+db.sqlite3-shm
+db.sqlite3-wal
