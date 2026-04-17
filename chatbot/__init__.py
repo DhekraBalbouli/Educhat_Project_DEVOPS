@@ -18,10 +18,10 @@ from chatbot.quiz import (
 
 # Salutations — identiques à mon_chatbot.py
 salutations = {
-    "bonjour": "Bonjour ! Comment puis-je t'aider à propos des langages de programmation ? 😊",
+    "bonjour": "Bonjour ! Comment puis-je t'aider à propos des langages ? 😊",
     "salut": "Salut ! Pose-moi une question sur C, Python ou JavaScript.",
-    "bonsoir": "Bonsoir ! Je suis là pour t'aider avec les langages de programmation.",
-    "ca va": "Je vais bien, merci ! Et toi ? Envie d'un quiz ou une explication ?",
+    "bonsoir": "Bonsoir ! Je suis là pour t'aider avec les langages ",
+    "ca va": "Je vais bien, merci ! Et toi  ?",
 }
 
 __all__ = [

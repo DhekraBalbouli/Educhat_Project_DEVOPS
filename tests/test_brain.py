@@ -9,7 +9,6 @@ Couvre :
   - Appel Mistral avec et sans clé API
 """
 
-
 # ══════════════════════════════════════════════
 # detecter_salutation()
 # ══════════════════════════════════════════════

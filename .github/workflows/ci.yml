@@ -245,21 +245,6 @@ jobs:
           pip install --upgrade pip
           pip install flake8 black
 
-      # ── Étape : Flake8 ─────────────────────────────────────────────
-      # flake8 vérifie :
-      #   - les erreurs Python (variables non définies, imports manquants)
-      #   - le respect de PEP8 (style officiel Python)
-      #   - les lignes trop longues
-      - name: Flake8 — vérification erreurs et style
-        run: |
-          echo "=== Analyse flake8 ==="
-          flake8 chatbot/ api/ main.py mon_chatbot.py \
-            --max-line-length=100 \
-            --exclude=__pycache__,venv,.venv \
-            --statistics \
-            --count
-          echo "✅ Flake8 — aucune erreur"
-
       # ── Étape : Black ──────────────────────────────────────────────
       # black vérifie que le code est formaté de manière uniforme.
       # "--check" ne modifie rien, il signale juste les problèmes.

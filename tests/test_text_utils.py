@@ -102,7 +102,6 @@ class TestDetecterLangage:
         )
 
     def test_detecte_js_abrege(self):
-        # "javascript" est dans le texte nettoyé
         assert detecter_langage("variable javascript", LANGAGES) == "javascript"
 
     def test_aucun_langage(self):
@@ -114,7 +113,6 @@ class TestDetecterLangage:
 
     def test_question_generique(self):
         result = detecter_langage("c'est quoi une variable ?", LANGAGES)
-        # Peut détecter 'c' à cause du mot 'c'est' — on vérifie juste que ça ne plante pas
         assert result is None or result in LANGAGES
 
     @pytest.mark.parametrize(
