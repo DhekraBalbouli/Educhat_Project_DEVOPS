@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EduChat — Apprends à coder</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+
+  <!-- ░░ SIDEBAR ░░ -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <span class="logo-icon">⟨/⟩</span>
+      <span class="logo-text">EduChat</span>
+    </div>
+
+    <nav class="sidebar-nav">
+      <button class="nav-btn active" data-view="chat" title="Chat">
+        <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        <span>Chat</span>
+      </button>
+      <button class="nav-btn" data-view="quiz" title="Quiz">
+        <svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+        <span>Quiz</span>
+      </button>
+      <button class="nav-btn" data-view="exercices" title="Exercices">
+        <svg viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+        <span>Exercices</span>
+      </button>
+      <button class="nav-btn" data-view="execute" title="Exécuter">
+        <svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        <span>Exécuter</span>
+      </button>
+    </nav>
+
+    <div class="sidebar-langages">
+      <p class="sidebar-label">Langages</p>
+      <div id="langagesList" class="lang-chips"></div>
+    </div>
+  </aside>
+
+  <!-- ░░ MAIN ░░ -->
+  <main class="main-content">
+
+    <!-- ── CHAT VIEW ── -->
+    <section class="view active" id="view-chat">
+      <header class="view-header">
+        <h1>Assistant <span class="accent">EduChat</span></h1>
+        <p class="subtitle">Pose une question sur C, Python ou JavaScript</p>
+      </header>
+
+      <div class="chat-window" id="chatWindow">
+        <div class="msg bot">
+          <div class="msg-avatar">🤖</div>
+          <div class="msg-bubble">
+            Bonjour ! Je suis <strong>EduChat</strong>. Pose-moi une question sur un langage de programmation, lance un <em>quiz</em> ou entraîne-toi avec des <em>exercices</em>. 🚀
+          </div>
+        </div>
+      </div>
+
+      <div class="chat-input-row">
+        <div class="input-wrap">
+          <textarea id="chatInput" rows="1" placeholder="Pose ta question…" autocomplete="off"></textarea>
+          <button id="chatSend" class="send-btn" title="Envoyer">
+            <svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── QUIZ VIEW ── -->
+    <section class="view" id="view-quiz">
+      <header class="view-header">
+        <h1>Mode <span class="accent">Quiz</span></h1>
+        <p class="subtitle">Teste tes connaissances</p>
+      </header>
+
+      <div class="lang-selector" id="quizLangSelector">
+        <p class="selector-label">Choisir un langage :</p>
+        <div class="lang-btns" id="quizLangBtns"></div>
+      </div>
+
+      <div class="quiz-container hidden" id="quizContainer">
+        <div class="quiz-progress">
+          <span id="quizProgressText">Question 1 / 5</span>
+          <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+        </div>
+        <div class="quiz-card" id="quizCard">
+          <p class="quiz-question" id="quizQuestion"></p>
+          <div class="quiz-options" id="quizOptions"></div>
+        </div>
+        <div class="quiz-result hidden" id="quizResult">
+          <div class="result-score" id="resultScore"></div>
+          <p id="resultMsg"></p>
+          <button class="btn-outline" id="quizRetry">🔁 Rejouer</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── EXERCICES VIEW ── -->
+    <section class="view" id="view-exercices">
+      <header class="view-header">
+        <h1>Mode <span class="accent">Exercices</span></h1>
+        <p class="subtitle">Écris et teste ton code</p>
+      </header>
+
+      <div class="lang-selector" id="exoLangSelector">
+        <p class="selector-label">Choisir un langage :</p>
+        <div class="lang-btns" id="exoLangBtns"></div>
+      </div>
+
+      <div class="exercice-container hidden" id="exerciceContainer">
+        <div class="exo-nav">
+          <button class="btn-ghost" id="exoPrev">← Précédent</button>
+          <span id="exoCounter">1 / 1</span>
+          <button class="btn-ghost" id="exoNext">Suivant →</button>
+        </div>
+        <div class="exo-card">
+          <p class="exo-enonce" id="exoEnonce"></p>
+          <div class="code-editor-wrap">
+            <div class="editor-header">
+              <span id="exoEditorLang" class="editor-lang-badge">python</span>
+              <button class="btn-run" id="exoRun">▶ Exécuter</button>
+            </div>
+            <textarea class="code-editor" id="exoEditor" spellcheck="false" placeholder="// Écris ton code ici…"></textarea>
+          </div>
+          <div class="output-panel hidden" id="exoOutput">
+            <p class="output-label">Sortie</p>
+            <pre id="exoOutputText"></pre>
+            <div id="exoVerdict" class="verdict"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── EXECUTE VIEW ── -->
+    <section class="view" id="view-execute">
+      <header class="view-header">
+        <h1>Bac à <span class="accent">Sable</span></h1>
+        <p class="subtitle">Exécute du code librement</p>
+      </header>
+
+      <div class="execute-container">
+        <div class="lang-selector-inline">
+          <span class="selector-label">Langage :</span>
+          <div class="lang-btns" id="execLangBtns"></div>
+        </div>
+        <div class="code-editor-wrap">
+          <div class="editor-header">
+            <span id="execEditorLang" class="editor-lang-badge">python</span>
+            <button class="btn-run" id="execRun">▶ Exécuter</button>
+          </div>
+          <textarea class="code-editor" id="execEditor" spellcheck="false" placeholder="# Écris ton code ici…"></textarea>
+        </div>
+        <div class="output-panel" id="execOutput">
+          <p class="output-label">Sortie</p>
+          <pre id="execOutputText">En attente d'exécution…</pre>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ░░ LOADING OVERLAY ░░ -->
+  <div class="loading-overlay hidden" id="loadingOverlay">
+    <div class="spinner"></div>
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
