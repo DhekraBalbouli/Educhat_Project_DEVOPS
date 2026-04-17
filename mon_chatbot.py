@@ -13,13 +13,15 @@ from chatbot import (
     demarrer_exercice,
 )
 
-RESET         = "\033[0m"
+RESET = "\033[0m"
 EDUCHAT_COLOR = "\033[92;1m"
-USER_COLOR    = "\033[96m"
-EXIT_COLOR    = "\033[91;1m"
+USER_COLOR = "\033[96m"
+EXIT_COLOR = "\033[91;1m"
 
 if __name__ == "__main__":
-    print(f"{EDUCHAT_COLOR}💬 EduChat : Bienvenue ! Pose une question, demande un quiz ou un exercice. (Tape 'exit' pour quitter){RESET}")
+    print(
+        f"{EDUCHAT_COLOR}💬 EduChat : Bienvenue ! Pose une question, demande un quiz ou un exercice. (Tape 'exit' pour quitter){RESET}"
+    )
 
     while True:
         question = input(f"{USER_COLOR}👤 Toi : {RESET}").strip().lower()

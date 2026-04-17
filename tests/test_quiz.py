@@ -17,12 +17,12 @@ from chatbot.quiz import (
     get_exercices_list,
     verifier_exercice,
 )
-from chatbot.corpus import data, langages_disponibles
-
+from chatbot.corpus import data
 
 # ══════════════════════════════════════════════
 # get_quiz_questions()
 # ══════════════════════════════════════════════
+
 
 class TestGetQuizQuestions:
 
@@ -41,8 +41,8 @@ class TestGetQuizQuestions:
         questions = get_quiz_questions(lang)
         for q in questions:
             assert "question" in q
-            assert "options"  in q
-            assert "answer"   in q
+            assert "options" in q
+            assert "answer" in q
 
     @pytest.mark.parametrize("lang", ["python", "javascript", "c"])
     def test_options_sont_liste(self, lang):
@@ -56,8 +56,9 @@ class TestGetQuizQuestions:
         """La bonne réponse doit toujours être dans les options (même après shuffle)."""
         questions = get_quiz_questions(lang)
         for q in questions:
-            assert q["answer"] in q["options"], \
-                f"Réponse '{q['answer']}' absente des options pour {lang}"
+            assert (
+                q["answer"] in q["options"]
+            ), f"Réponse '{q['answer']}' absente des options pour {lang}"
 
     def test_options_melangees(self):
         """Appels multiples → ordre des options différent au moins une fois."""
@@ -70,10 +71,10 @@ class TestGetQuizQuestions:
         assert len(resultats) > 1, "Les options ne semblent pas être mélangées"
 
 
-
 # ══════════════════════════════════════════════
 # verifier_reponse_quiz()
 # ══════════════════════════════════════════════
+
 
 class TestVerifierReponseQuiz:
 
@@ -93,12 +94,12 @@ class TestVerifierReponseQuiz:
     def test_retourne_dict_avec_correct_et_answer(self, lang):
         result = verifier_reponse_quiz(lang, 0, "test")
         assert "correct" in result
-        assert "answer"  in result
+        assert "answer" in result
 
     def test_insensible_casse(self):
         """La vérification doit être insensible à la casse."""
         lang = "python"
-        q    = data["langages"][lang]["quizzes"][0]
+        q = data["langages"][lang]["quizzes"][0]
         # Réponse en majuscules
         result = verifier_reponse_quiz(lang, 0, q["answer"].upper())
         assert result["correct"] is True
@@ -106,7 +107,7 @@ class TestVerifierReponseQuiz:
     def test_avec_espaces(self):
         """Des espaces autour ne doivent pas invalider la réponse."""
         lang = "python"
-        q    = data["langages"][lang]["quizzes"][0]
+        q = data["langages"][lang]["quizzes"][0]
         result = verifier_reponse_quiz(lang, 0, f"  {q['answer']}  ")
         assert result["correct"] is True
 
@@ -122,6 +123,7 @@ class TestVerifierReponseQuiz:
 # ══════════════════════════════════════════════
 # get_exercices_list()
 # ══════════════════════════════════════════════
+
 
 class TestGetExercicesList:
 
@@ -139,7 +141,7 @@ class TestGetExercicesList:
     def test_structure_exercice(self, lang):
         exercices = get_exercices_list(lang)
         for exo in exercices:
-            assert "index"  in exo
+            assert "index" in exo
             assert "enonce" in exo
 
     @pytest.mark.parametrize("lang", ["python", "javascript", "c"])
@@ -159,19 +161,22 @@ class TestGetExercicesList:
         for lang in ["python", "javascript", "c"]:
             exercices = get_exercices_list(lang)
             for exo in exercices:
-                assert "solution" not in exo, \
-                    f"La solution est exposée pour {lang} — risque de triche !"
+                assert (
+                    "solution" not in exo
+                ), f"La solution est exposée pour {lang} — risque de triche !"
 
 
 # ══════════════════════════════════════════════
 # verifier_exercice()
 # ══════════════════════════════════════════════
 
+
 class TestVerifierExercice:
 
     def test_code_python_correct(self):
         """print('Hello World') doit matcher la solution 'Hello World'."""
         from chatbot.corpus import data as d
+
         # On prend le premier exercice Python et on crée le code correspondant
         solution = d["langages"]["python"]["exercices"][0]["solution"]
         code = f"print('{solution}')"
@@ -184,9 +189,9 @@ class TestVerifierExercice:
 
     def test_retourne_output(self):
         result = verifier_exercice("python", 0, "print('test')")
-        assert "output"   in result
+        assert "output" in result
         assert "expected" in result
-        assert "correct"  in result
+        assert "correct" in result
 
     def test_output_contient_sortie_reelle(self):
         result = verifier_exercice("python", 0, "print('Hello World')")

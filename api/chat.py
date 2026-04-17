@@ -2,9 +2,13 @@
 
 from fastapi import APIRouter
 from pydantic import BaseModel
-from typing import Optional
 
-from chatbot import salutations, detecter_langage, repondre_question, langages_disponibles
+from chatbot import (
+    salutations,
+    detecter_langage,
+    repondre_question,
+    langages_disponibles,
+)
 
 router = APIRouter()
 

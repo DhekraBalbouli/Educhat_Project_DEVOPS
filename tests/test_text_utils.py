@@ -9,7 +9,7 @@ Couvre :
 """
 
 import pytest
-from chatbot.text_utils import nettoyer_texte, corriger_texte, detecter_langage
+from chatbot.text_utils import nettoyer_texte, detecter_langage
 
 LANGAGES = ["python", "javascript", "c"]
 
@@ -17,6 +17,7 @@ LANGAGES = ["python", "javascript", "c"]
 # ══════════════════════════════════════════════
 # nettoyer_texte()
 # ══════════════════════════════════════════════
+
 
 class TestNettoyerTexte:
 
@@ -62,12 +63,15 @@ class TestNettoyerTexte:
     def test_texte_deja_propre(self):
         assert nettoyer_texte("python variable") == "python variable"
 
-    @pytest.mark.parametrize("entree,attendu", [
-        ("Bonjour !", "bonjour"),
-        ("JAVASCRIPT", "javascript"),
-        ("déclarer", "declarer"),
-        ("qu'est-ce que c'est", "questce que cest"),
-    ])
+    @pytest.mark.parametrize(
+        "entree,attendu",
+        [
+            ("Bonjour !", "bonjour"),
+            ("JAVASCRIPT", "javascript"),
+            ("déclarer", "declarer"),
+            ("qu'est-ce que c'est", "questce que cest"),
+        ],
+    )
     def test_parametrique(self, entree, attendu):
         assert nettoyer_texte(entree) == attendu
 
@@ -75,6 +79,7 @@ class TestNettoyerTexte:
 # ══════════════════════════════════════════════
 # detecter_langage()
 # ══════════════════════════════════════════════
+
 
 class TestDetecterLangage:
 
@@ -91,7 +96,10 @@ class TestDetecterLangage:
         assert detecter_langage("apprendre PYTHON", LANGAGES) == "python"
 
     def test_detecte_python_phrase(self):
-        assert detecter_langage("je veux apprendre python aujourd'hui", LANGAGES) == "python"
+        assert (
+            detecter_langage("je veux apprendre python aujourd'hui", LANGAGES)
+            == "python"
+        )
 
     def test_detecte_js_abrege(self):
         # "javascript" est dans le texte nettoyé
@@ -109,11 +117,14 @@ class TestDetecterLangage:
         # Peut détecter 'c' à cause du mot 'c'est' — on vérifie juste que ça ne plante pas
         assert result is None or result in LANGAGES
 
-    @pytest.mark.parametrize("texte,attendu", [
-        ("variable python",         "python"),
-        ("boucle for javascript",   "javascript"),
-        ("pointeur en c",           "c"),
-        ("fonction python lambda",  "python"),
-    ])
+    @pytest.mark.parametrize(
+        "texte,attendu",
+        [
+            ("variable python", "python"),
+            ("boucle for javascript", "javascript"),
+            ("pointeur en c", "c"),
+            ("fonction python lambda", "python"),
+        ],
+    )
     def test_parametrique(self, texte, attendu):
         assert detecter_langage(texte, LANGAGES) == attendu

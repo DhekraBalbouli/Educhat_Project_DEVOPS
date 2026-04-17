@@ -5,9 +5,8 @@ Code 100% identique à mon_chatbot.py — juste déplacé ici.
 """
 
 import random
-from typing import Optional
 
-from chatbot.corpus import data, langages_disponibles
+from chatbot.corpus import data
 from chatbot.executor import executer_et_capturer_sortie
 from chatbot.text_utils import nettoyer_texte
 
@@ -20,11 +19,13 @@ def get_quiz_questions(langage: str) -> list[dict]:
     for q in questions:
         options = q["options"][:]
         random.shuffle(options)
-        result.append({
-            "question": q["question"],
-            "options":  options,
-            "answer":   q["answer"],
-        })
+        result.append(
+            {
+                "question": q["question"],
+                "options": options,
+                "answer": q["answer"],
+            }
+        )
     return result
 
 
@@ -113,11 +114,15 @@ def afficher_exercice(langage: str) -> None:
         if nettoyer_texte(sortie) == nettoyer_texte(exo["solution"]):
             print("✅ Correct !")
         else:
-            print(f"❌ Faux. Résultat attendu : {exo['solution']}\nTa sortie : {sortie}")
+            print(
+                f"❌ Faux. Résultat attendu : {exo['solution']}\nTa sortie : {sortie}"
+            )
 
 
 def demarrer_exercice() -> None:
-    langage = input("🎯 Bienvenue dans les exercices !\nChoisir un langage (C, Python, JavaScript) : ").lower()
+    langage = input(
+        "🎯 Bienvenue dans les exercices !\nChoisir un langage (C, Python, JavaScript) : "
+    ).lower()
     if langage in ["c", "python", "javascript"]:
         afficher_exercice(langage)
     else:

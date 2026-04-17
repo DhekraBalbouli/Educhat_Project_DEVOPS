@@ -19,9 +19,9 @@ spell = SpellChecker()
 def nettoyer_texte(texte: str) -> str:
     """Minuscules + suppression accents + suppression ponctuation."""
     texte = texte.lower()
-    texte = unicodedata.normalize('NFD', texte)
-    texte = texte.encode('ascii', 'ignore').decode('utf-8')
-    texte = re.sub(r'[^\w\s]', '', texte)
+    texte = unicodedata.normalize("NFD", texte)
+    texte = texte.encode("ascii", "ignore").decode("utf-8")
+    texte = re.sub(r"[^\w\s]", "", texte)
     return texte.strip()
 
 
@@ -41,6 +41,7 @@ from rapidfuzz import fuzz
 from chatbot.config import FUZZ_THRESHOLD
 from chatbot.text_utils import corriger_texte
 
+
 def detecter_langage(texte: str, langages_disponibles: list) -> Optional[str]:
     """
     Détecte le langage de programmation mentionné dans le texte.
@@ -57,4 +58,3 @@ def detecter_langage(texte: str, langages_disponibles: list) -> Optional[str]:
             if score > FUZZ_THRESHOLD:
                 return langage
     return None
-

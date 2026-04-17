@@ -9,14 +9,13 @@ Couvre :
   - executer_et_capturer_sortie() — dispatcher principal
 """
 
-import pytest
 from unittest.mock import patch, MagicMock
 from chatbot.executor import executer_et_capturer_sortie
-
 
 # ══════════════════════════════════════════════
 # Python
 # ══════════════════════════════════════════════
+
 
 class TestExecutionPython:
 
@@ -88,6 +87,7 @@ class TestExecutionPython:
 # JavaScript (mocké car Node.js peut être absent)
 # ══════════════════════════════════════════════
 
+
 class TestExecutionJavaScript:
 
     def test_hello_world_mocke(self):
@@ -95,7 +95,9 @@ class TestExecutionJavaScript:
         mock_result.stdout = "Hello World\n"
         mock_result.stderr = ""
         with patch("subprocess.run", return_value=mock_result):
-            sortie = executer_et_capturer_sortie("console.log('Hello World')", "javascript")
+            sortie = executer_et_capturer_sortie(
+                "console.log('Hello World')", "javascript"
+            )
         assert sortie == "Hello World"
 
     def test_calcul_mocke(self):
@@ -119,7 +121,6 @@ class TestExecutionJavaScript:
             sortie = executer_et_capturer_sortie("console.log('test')", "javascript")
         assert "introuvable" in sortie.lower() or "node" in sortie.lower()
 
-
     def test_sans_sortie_js(self):
         mock_result = MagicMock()
         mock_result.stdout = ""
@@ -133,11 +134,12 @@ class TestExecutionJavaScript:
 # C (mocké car GCC peut être absent)
 # ══════════════════════════════════════════════
 
+
 class TestExecutionC:
 
     def test_hello_world_c_mocke(self):
         compile_mock = MagicMock(returncode=0, stderr="")
-        exec_mock    = MagicMock(stdout="Hello World\n", stderr="")
+        exec_mock = MagicMock(stdout="Hello World\n", stderr="")
         with patch("subprocess.run", side_effect=[compile_mock, exec_mock]):
             sortie = executer_et_capturer_sortie(
                 '#include<stdio.h>\nint main(){printf("Hello World");return 0;}', "c"
@@ -155,10 +157,11 @@ class TestExecutionC:
             sortie = executer_et_capturer_sortie("int main(){return 0;}", "c")
         assert "introuvable" in sortie.lower() or "gcc" in sortie.lower()
 
- 
+
 # ══════════════════════════════════════════════
 # Dispatcher — langage non supporté
 # ══════════════════════════════════════════════
+
 
 class TestDispatcher:
 
