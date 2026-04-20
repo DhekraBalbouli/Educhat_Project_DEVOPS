@@ -1,7 +1,4 @@
 """
-tests/test_corpus.py
-Tests unitaires — chatbot/corpus.py
-
 Couvre :
   - Chargement du fichier YAML
   - Structure des données

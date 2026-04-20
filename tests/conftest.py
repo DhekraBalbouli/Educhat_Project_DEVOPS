@@ -1,8 +1,3 @@
-"""
-tests/conftest.py
-Fixtures partagées entre tous les fichiers de tests.
-pytest les charge automatiquement — pas besoin de les importer.
-"""
 
 import pytest
 from unittest.mock import patch, MagicMock

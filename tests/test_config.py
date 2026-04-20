@@ -1,7 +1,4 @@
 """
-tests/test_config.py
-Tests unitaires — chatbot/config.py
-
 Vérifie que la configuration est correctement définie
 et que les chemins existent.
 """

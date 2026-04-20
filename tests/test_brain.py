@@ -1,7 +1,4 @@
 """
-tests/test_brain.py
-Tests unitaires — chatbot/brain.py  (ou chatbot/corpus.py selon ta version)
-
 Couvre :
   - detecter_salutation()
   - repondre() / repondre_question()

@@ -1,7 +1,4 @@
 """
-tests/test_quiz.py
-Tests unitaires — chatbot/quiz.py
-
 Couvre :
   - get_quiz_questions()   : structure, options mélangées
   - verifier_reponse_quiz(): réponse correcte / incorrecte / index invalide

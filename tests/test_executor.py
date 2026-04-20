@@ -1,7 +1,4 @@
 """
-tests/test_executor.py
-Tests unitaires — chatbot/executor.py
-
 Couvre :
   - Execution Python  (_exec_python)
   - Execution JavaScript (_exec_javascript)

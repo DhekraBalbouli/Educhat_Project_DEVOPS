@@ -1,7 +1,4 @@
 """
-tests/test_api.py
-Tests d'intégration simples — toutes les routes FastAPI
-
 On utilise TestClient qui simule de vraies requêtes HTTP
 sans avoir besoin de démarrer le serveur.
 

@@ -1,7 +1,4 @@
 """
-tests/test_text_utils.py
-Tests unitaires — chatbot/text_utils.py
-
 Couvre :
   - nettoyer_texte()
   - corriger_texte()

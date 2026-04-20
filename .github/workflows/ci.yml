@@ -1,16 +1,10 @@
 # ═══════════════════════════════════════════════════════════════════
-# .github/workflows/ci.yml
-# Pipeline CI — EduChat
-#
-# Ce pipeline se déclenche à chaque push ou Pull Request.
 # Il exécute 4 jobs dans l'ordre :
 #
 #   Job 1 → Vérification syntaxe  (Python + JS + C)
 #   Job 2 → Qualité du code       (flake8 + black)
 #   Job 3 → Tests unitaires       (pytest)
 #   Job 4 → Tests d'intégration   (API FastAPI)
-#
-# Si un job échoue, les suivants sont bloqués.
 # ═══════════════════════════════════════════════════════════════════
 
 name: CI — EduChat
@@ -28,10 +22,6 @@ on:
 
 # ═══════════════════════════════════════════════════════════════════
 # JOB 1 — VÉRIFICATION SYNTAXE
-#
-# Vérifie que le code Python, JavaScript et C
-# ne contient pas d'erreurs de syntaxe basiques,
-# SANS exécuter le code.
 # ═══════════════════════════════════════════════════════════════════
 jobs:
   verification-syntaxe:
@@ -40,11 +30,9 @@ jobs:
 
     steps:
 
-      # ── Étape 1 : Récupérer le code depuis GitHub ──────────────────
       - name: Récupérer le code
         uses: actions/checkout@v4
 
-      # ── Étape 2 : Installer Python ─────────────────────────────────
       - name: Installer Python 3.11
         uses: actions/setup-python@v5
         with:
@@ -52,7 +40,6 @@ jobs:
 
       # ── Étape 3 : Vérification syntaxe Python ──────────────────────
       # py_compile vérifie si le fichier .py est syntaxiquement correct
-      # sans l'exécuter. C'est l'équivalent de "est-ce que ça compile ?"
       - name: Syntaxe Python — fichiers principaux
         run: |
           echo "=== Vérification syntaxe Python ==="
@@ -87,8 +74,6 @@ jobs:
           done
 
       # ── Étape 4 : Vérification syntaxe JavaScript ──────────────────
-      # Node.js est déjà installé sur ubuntu-latest.
-      # "node --check" vérifie la syntaxe sans exécuter le code.
       - name: Installer Node.js
         uses: actions/setup-node@v4
         with:
@@ -111,16 +96,11 @@ jobs:
 
 # ═══════════════════════════════════════════════════════════════════
 # JOB 3 — TESTS UNITAIRES
-#
-# Lance les tests sur les fonctions individuelles :
-#   - nettoyer_texte(), detecter_langage()
-#   - executer_et_capturer_sortie()
-#   - structure du corpus YAML
 # ═══════════════════════════════════════════════════════════════════
   tests-unitaires:
     name: "Tests unitaires (pytest)"
     runs-on: ubuntu-latest
-    needs: verification-syntaxe   # ne démarre que si Job 2 passe
+    needs: verification-syntaxe 
 
     steps:
 
@@ -143,9 +123,7 @@ jobs:
         run: |
           python -m spacy download en_core_web_sm
 
-      # ── Étape : Tests unitaires uniquement ────────────────────────
-      # On lance seulement les tests qui ne touchent pas à l'API.
-      # Ces tests sont rapides et ne nécessitent pas de serveur.
+
       - name: Lancer les tests unitaires
         run: |
           echo "=== Tests unitaires ==="
@@ -159,24 +137,20 @@ jobs:
                  --cov=chatbot \
                  --cov-report=term-missing
 
-      # ── Étape : Sauvegarder le rapport de coverage ─────────────────
       - name: Sauvegarder le rapport coverage
         uses: actions/upload-artifact@v4
-        if: always()   # même si les tests échouent
+        if: always()  
         with:
           name: rapport-coverage-unitaires
           path: .coverage
 
 # ═══════════════════════════════════════════════════════════════════
 # JOB 4 — TESTS D'INTÉGRATION
-#
-# Lance les tests sur les routes HTTP de l'API FastAPI.
-# Ces tests vérifient que tous les composants fonctionnent ensemble.
 # ═══════════════════════════════════════════════════════════════════
   tests-integration:
     name: "Tests d'intégration (API FastAPI)"
     runs-on: ubuntu-latest
-    needs: tests-unitaires   # ne démarre que si Job 3 passe
+    needs: tests-unitaires   
 
     steps:
 
@@ -199,7 +173,6 @@ jobs:
         run: |
           python -m spacy download en_core_web_sm
 
-      # ── Étape : Tests d'intégration API ──────────────────────────
       - name: Lancer les tests d'intégration
         run: |
           echo "=== Tests d'intégration API ==="
@@ -211,22 +184,17 @@ jobs:
                  --cov-report=term-missing
 
 
-      # ── Étape : Rapport coverage global ───────────────────────────
       - name: Coverage globale (tous les modules)
         run: |
           echo "=== Coverage globale ==="
           pytest tests/ -v 
 # ═══════════════════════════════════════════════════════════════════
 # JOB 2 — QUALITÉ DU CODE PYTHON
-#
-# Vérifie que le code Python respecte les conventions :
-#   - flake8  : détecte les erreurs et mauvaises pratiques
-#   - black   : vérifie le formatage du code
 # ═══════════════════════════════════════════════════════════════════
   qualite-code:
     name: "Qualité du code Python (flake8 + black)"
     runs-on: ubuntu-latest
-    needs: tests-integration   # ne démarre que si Job 1 passe
+    needs: tests-integration   
 
     steps:
 
@@ -239,7 +207,6 @@ jobs:
           python-version: "3.11"
           cache: "pip"
 
-      # ── Étape : Installer les outils de qualité ────────────────────
       - name: Installer flake8 et black
         run: |
           pip install --upgrade pip
@@ -247,7 +214,6 @@ jobs:
 
       # ── Étape : Black ──────────────────────────────────────────────
       # black vérifie que le code est formaté de manière uniforme.
-      # "--check" ne modifie rien, il signale juste les problèmes.
       - name: Black — vérification formatage
         run: |
           echo "=== Vérification formatage black ==="
@@ -266,5 +232,4 @@ jobs:
           echo ""
           echo "=== Indice de maintenabilité ==="
           radon mi chatbot/ api/ main.py -s
-        continue-on-error: true   # Ce job n'échoue pas si radon signale des problèmes
-                                  # C'est informatif uniquement pour les étudiants
+        continue-on-error: true   
