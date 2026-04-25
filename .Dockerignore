@@ -1,0 +1,48 @@
+# ── Python ───────────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.pytest_cache/
+.coverage
+htmlcov/
+coverage*.xml
+
+# ── Environnement virtuel ─────────────────────────────────────────────────────
+venv/
+.venv/
+.env
+.env.example
+
+# ── Tests (inutiles en production) ───────────────────────────────────────────
+tests/
+
+# ── Outils CI / DevOps ───────────────────────────────────────────────────────
+.github/
+sonar-project.properties
+
+# ── Base de données locale ───────────────────────────────────────────────────
+db.sqlite3
+db.sqlite3-shm
+db.sqlite3-wal
+
+# ── IDE / OS ─────────────────────────────────────────────────────────────────
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# ── Logs & temporaires ────────────────────────────────────────────────────────
+*.log
+*.tmp
+*.temp
+
+# ── Rapports ─────────────────────────────────────────────────────────────────
+reports/
+allure-results/
+allure-report/
+
+# ── Fichiers compilés C ───────────────────────────────────────────────────────
+*.exe
+*.out
+*.o
