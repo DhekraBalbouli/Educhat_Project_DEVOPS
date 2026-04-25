@@ -254,7 +254,7 @@ jobs:
       - name: Récupérer le code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0   # IMPORTANT pour sonar
+          fetch-depth: 0
 
       - name: Installer Java
         uses: actions/setup-java@v4
@@ -262,7 +262,12 @@ jobs:
           distribution: "temurin"
           java-version: "17"
 
-      - name: Scanner SonarCloud
+      - name: Générer coverage XML
+        run: |
+          pip install pytest pytest-cov
+          pytest --cov=chatbot --cov=api --cov-report=xml
+
+      - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@master
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -271,3 +276,4 @@ jobs:
           args: >
             -Dsonar.projectKey=DhekraBalbouli_Educhat_Project_DEVOPS
             -Dsonar.organization=dhekrabalbouli
+            -Dsonar.python.coverage.reportPaths=coverage.xml

@@ -11,8 +11,13 @@ import yaml
 from chatterbot import ChatBot
 from chatterbot.trainers import ListTrainer
 
-from chatbot.config import (CONFIDENCE_HIGH, CONFIDENCE_MID, DIFFLIB_CUTOFF,
-                            RATIO_MIN, YAML_PATH)
+from chatbot.config import (
+    CONFIDENCE_HIGH,
+    CONFIDENCE_MID,
+    DIFFLIB_CUTOFF,
+    RATIO_MIN,
+    YAML_PATH,
+)
 from chatbot.text_utils import nettoyer_texte
 
 # ── Chargement YAML ───────────────────────────────────────────────────────────
