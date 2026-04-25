@@ -256,6 +256,11 @@ jobs:
           pip install --upgrade pip
           pip install -r requirements.txt
           pip install pytest pytest-cov
+      
+      - name: Télécharger modèle spaCy
+        run: |
+          python -m spacy download en_core_web_sm
+          
       - name: Récupérer le code
         uses: actions/checkout@v4
         with:
