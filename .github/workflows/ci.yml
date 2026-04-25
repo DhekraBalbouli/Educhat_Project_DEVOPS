@@ -117,6 +117,7 @@ jobs:
           pip install --upgrade pip
           pip install -r requirements.txt
           pip install pytest pytest-cov
+          pip install pytest pytest-cov allure-pytest
       
       - name: Télécharger modèle spaCy
         run: |
