@@ -123,26 +123,43 @@ jobs:
           python -m spacy download en_core_web_sm
 
 
+      - name: Créer dossiers rapports
+        run: mkdir -p reports/allure-results reports/allure-report
+
       - name: Lancer les tests unitaires
         run: |
           echo "=== Tests unitaires ==="
           pytest tests/test_text_utils.py \
-                 tests/test_executor.py \
-                 tests/test_corpus.py \
-                 tests/test_quiz.py \
-                 tests/test_brain.py \
-                 -v \
-                 --tb=short \
-                 --cov=chatbot \
-                 --cov-report=term-missing \
-                 --cov-report=html
+                tests/test_executor.py \
+                tests/test_corpus.py \
+                tests/test_quiz.py \
+                tests/test_brain.py \
+                -v \
+                --tb=short \
+                --cov=chatbot \
+                --cov-report=term-missing \
+                --cov-report=html \
+                --alluredir=reports/allure-results
 
-      - name: Sauvegarder le rapport coverage
+      - name: Installer Allure
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y default-jre
+          wget https://github.com/allure-framework/allure2/releases/latest/download/allure-2.27.0.tgz
+          tar -zxvf allure-2.27.0.tgz
+          sudo mv allure-2.27.0 /opt/allure
+          sudo ln -s /opt/allure/bin/allure /usr/bin/allure
+
+      - name: Générer rapport Allure
+        run: |
+          allure generate reports/allure-results -o reports/allure-report --clean
+
+      - name: Sauvegarder rapport Allure
         uses: actions/upload-artifact@v4
-        if: always()  
+        if: always()
         with:
-          name: rapport-coverage-html
-          path: htmlcov/
+          name: allure-report
+          path: reports/allure-report
 
 # ═══════════════════════════════════════════════════════════════════
 # JOB 4 — TESTS D'INTÉGRATION
