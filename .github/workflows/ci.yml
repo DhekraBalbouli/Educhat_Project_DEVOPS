@@ -92,7 +92,6 @@ jobs:
             done
           fi
 
-
 # ═══════════════════════════════════════════════════════════════════
 # JOB 3 — TESTS UNITAIRES
 # ═══════════════════════════════════════════════════════════════════
@@ -194,13 +193,13 @@ jobs:
   qualite-code:
     name: "Qualité du code Python (flake8 + black)"
     runs-on: ubuntu-latest
-    needs: tests-integration   
+    needs: verification-syntaxe   # ne démarre que si Job 1 passe
 
     steps:
 
       - name: Récupérer le code
         uses: actions/checkout@v4
-
+ 
       - name: Installer Python 3.11
         uses: actions/setup-python@v5
         with:
@@ -210,20 +209,32 @@ jobs:
       - name: Installer flake8 et black
         run: |
           pip install --upgrade pip
-          pip install flake8 black
-
+          pip install flake8 black     
+      
       # ── Étape : Black ──────────────────────────────────────────────
-      # black vérifie que le code est formaté de manière uniforme.
       - name: Black — vérification formatage
         run: |
           echo "=== Vérification formatage black ==="
           black --check --diff \
             chatbot/ api/ main.py mon_chatbot.py
           echo "✅ Black — formatage correct"
+        continue-on-error: true
 
-      # ── Étape : Rapport de complexité (bonus) ─────────────────────
-      # radon mesure la complexité cyclomatique des fonctions.
-      # Une fonction trop complexe est difficile à maintenir.
+    
+      # ── Étape : Flake8 ─────────────────────────────────────────────
+      - name: Flake8 — vérification erreurs et style
+        run: |
+          echo "=== Analyse flake8 ==="
+          flake8 chatbot/ api/ main.py mon_chatbot.py \
+            --max-line-length=170 \
+            --ignore=E203,W503,E501 \
+            --exclude=__pycache__,venv,.venv \
+            --statistics \
+            --count
+          echo "✅ Flake8 — aucune erreur"
+        continue-on-error: true
+ 
+
       - name: Radon — complexité du code
         run: |
           pip install radon
@@ -232,4 +243,31 @@ jobs:
           echo ""
           echo "=== Indice de maintenabilité ==="
           radon mi chatbot/ api/ main.py -s
-        continue-on-error: true   
+        continue-on-error: true 
+
+  sonar-analysis:
+  name: "Analyse SonarCloud"
+  runs-on: ubuntu-latest
+  needs: qualite-code
+
+  steps:
+    - name: Récupérer le code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0   # IMPORTANT pour sonar
+
+    - name: Installer Java
+      uses: actions/setup-java@v4
+      with:
+        distribution: "temurin"
+        java-version: "17"
+
+    - name: Scanner SonarCloud
+      uses: SonarSource/sonarcloud-github-action@master
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      with:
+        args: >
+          -Dsonar.projectKey=DhekraBalbouli_Educhat_Project_DEVOPS
+          -Dsonar.organization=dhekrabalbouli

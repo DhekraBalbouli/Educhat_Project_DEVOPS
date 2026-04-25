@@ -7,8 +7,8 @@ import re
 import unicodedata
 from typing import Optional
 
-from spellchecker import SpellChecker
 from rapidfuzz import fuzz
+from spellchecker import SpellChecker
 
 from chatbot.config import FUZZ_THRESHOLD
 
@@ -37,7 +37,9 @@ def corriger_texte(texte: str) -> str:
 
 import re
 from typing import Optional
+
 from rapidfuzz import fuzz
+
 from chatbot.config import FUZZ_THRESHOLD
 from chatbot.text_utils import corriger_texte
 

@@ -4,21 +4,15 @@ Chargement du fichier langages.yml + entraînement ChatterBot + indexation.
 Code 100% identique à mon_chatbot.py — juste déplacé ici.
 """
 
-import yaml
 import difflib
 import random
-from typing import Optional, Tuple
 
+import yaml
 from chatterbot import ChatBot
 from chatterbot.trainers import ListTrainer
 
-from chatbot.config import (
-    YAML_PATH,
-    DIFFLIB_CUTOFF,
-    RATIO_MIN,
-    CONFIDENCE_HIGH,
-    CONFIDENCE_MID,
-)
+from chatbot.config import (CONFIDENCE_HIGH, CONFIDENCE_MID, DIFFLIB_CUTOFF,
+                            RATIO_MIN, YAML_PATH)
 from chatbot.text_utils import nettoyer_texte
 
 # ── Chargement YAML ───────────────────────────────────────────────────────────

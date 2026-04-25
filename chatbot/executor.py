@@ -4,13 +4,13 @@ Exécution de code utilisateur : Python, JavaScript, C.
 Code 100% identique à mon_chatbot.py — juste déplacé ici.
 """
 
+import contextlib
 import io
 import os
-import contextlib
 import subprocess
 import tempfile
 
-from chatbot.config import NODE_PATH, MINGW_PATH
+from chatbot.config import MINGW_PATH, NODE_PATH
 
 
 def executer_et_capturer_sortie(code_utilisateur: str, langage: str) -> str:

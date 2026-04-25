@@ -5,16 +5,11 @@ main.py importe depuis ici — même interface qu'avant avec mon_chatbot.py.
 """
 
 from chatbot.corpus import data, langages_disponibles, repondre_question
-from chatbot.text_utils import nettoyer_texte, detecter_langage
 from chatbot.executor import executer_et_capturer_sortie
-from chatbot.quiz import (
-    get_quiz_questions,
-    verifier_reponse_quiz,
-    get_exercices_list,
-    verifier_exercice,
-    demarrer_quiz,
-    demarrer_exercice,
-)
+from chatbot.quiz import (demarrer_exercice, demarrer_quiz, get_exercices_list,
+                          get_quiz_questions, verifier_exercice,
+                          verifier_reponse_quiz)
+from chatbot.text_utils import detecter_langage, nettoyer_texte
 
 # Salutations — identiques à mon_chatbot.py
 salutations = {
