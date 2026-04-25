@@ -39,7 +39,6 @@ jobs:
           python-version: "3.11"
 
       # ── Étape 3 : Vérification syntaxe Python ──────────────────────
-      # py_compile vérifie si le fichier .py est syntaxiquement correct
       - name: Syntaxe Python — fichiers principaux
         run: |
           echo "=== Vérification syntaxe Python ==="
@@ -135,14 +134,15 @@ jobs:
                  -v \
                  --tb=short \
                  --cov=chatbot \
-                 --cov-report=term-missing
+                 --cov-report=term-missing \
+                 --cov-report=html
 
       - name: Sauvegarder le rapport coverage
         uses: actions/upload-artifact@v4
         if: always()  
         with:
-          name: rapport-coverage-unitaires
-          path: .coverage
+          name: rapport-coverage-html
+          path: htmlcov/
 
 # ═══════════════════════════════════════════════════════════════════
 # JOB 4 — TESTS D'INTÉGRATION
