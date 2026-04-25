@@ -14,7 +14,8 @@ class QuizAnswerRequest(BaseModel):
     answer: str
 
 
-@router.get("/quiz/{langage}")
+@router.get("/quiz/{langage}",responses={400: {"description": "Index de question invalide"},
+                                      404: {"description": "Langage non trouvé"}})
 async def get_quiz(langage: str):
     langage = langage.lower()
     if langage not in data["langages"]:
@@ -25,7 +26,8 @@ async def get_quiz(langage: str):
     return {"langage": langage, "questions": questions}
 
 
-@router.post("/quiz/check")
+@router.post("/quiz/check",responses={400: {"description": "Index de question invalide"},
+                                      404: {"description": "Langage non trouvé"}})
 async def check_quiz_answer(req: QuizAnswerRequest):
     langage = req.langage.lower()
     if langage not in data["langages"]:

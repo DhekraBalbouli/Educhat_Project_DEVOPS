@@ -22,7 +22,13 @@ async def get_exercices(langage: str):
     return {"langage": langage, "exercices": get_exercices_list(langage)}
 
 
-@router.post("/exercices/check")
+@router.post(
+    "/exercices/check",
+    responses={
+        400: {"description": "Index d'exercice invalide"},
+        404: {"description": "Langage non trouvé"}
+    }
+)
 async def check_exercice(req: ExerciceCheckRequest):
     langage = req.langage.lower()
     if langage not in data["langages"]:
