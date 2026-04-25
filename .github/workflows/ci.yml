@@ -117,54 +117,32 @@ jobs:
           pip install --upgrade pip
           pip install -r requirements.txt
           pip install pytest pytest-cov
-          pip install pytest pytest-cov allure-pytest
       
       - name: Télécharger modèle spaCy
         run: |
           python -m spacy download en_core_web_sm
 
 
-      - name: Créer dossiers rapports
-        run: mkdir -p reports/allure-results reports/allure-report
-
       - name: Lancer les tests unitaires
         run: |
           echo "=== Tests unitaires ==="
           pytest tests/test_text_utils.py \
-                tests/test_executor.py \
-                tests/test_corpus.py \
-                tests/test_quiz.py \
-                tests/test_brain.py \
-                -v \
-                --tb=short \
-                --cov=chatbot \
-                --cov-report=term-missing \
-                --cov-report=html \
-                --alluredir=reports/allure-results
+                 tests/test_executor.py \
+                 tests/test_corpus.py \
+                 tests/test_quiz.py \
+                 tests/test_brain.py \
+                 -v \
+                 --tb=short \
+                 --cov=chatbot \
+                 --cov-report=term-missing \
+                 --cov-report=html
 
-      - name: Installer Allure
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y default-jre curl
-
-          ALLURE_VERSION=2.39.0
-
-          wget https://github.com/allure-framework/allure2/releases/download/${ALLURE_VERSION}/allure-${ALLURE_VERSION}.tgz
-          tar -zxvf allure-${ALLURE_VERSION}.tgz
-
-          sudo mv allure-${ALLURE_VERSION} /opt/allure
-          sudo ln -s /opt/allure/bin/allure /usr/bin/allure
-
-      - name: Générer rapport Allure
-        run: |
-          allure generate reports/allure-results -o reports/allure-report --clean
-
-      - name: Sauvegarder rapport Allure
+      - name: Sauvegarder le rapport coverage
         uses: actions/upload-artifact@v4
-        if: always()
+        if: always()  
         with:
-          name: allure-report
-          path: reports/allure-report
+          name: rapport-coverage-html
+          path: htmlcov/
 
 # ═══════════════════════════════════════════════════════════════════
 # JOB 4 — TESTS D'INTÉGRATION
