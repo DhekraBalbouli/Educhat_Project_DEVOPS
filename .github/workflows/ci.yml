@@ -246,28 +246,28 @@ jobs:
         continue-on-error: true 
 
   sonar-analysis:
-  name: "Analyse SonarCloud"
-  runs-on: ubuntu-latest
-  needs: qualite-code
+    name: "Analyse SonarCloud"
+    runs-on: ubuntu-latest
+    needs: qualite-code
 
-  steps:
-    - name: Récupérer le code
-      uses: actions/checkout@v4
-      with:
-        fetch-depth: 0   # IMPORTANT pour sonar
+    steps:
+      - name: Récupérer le code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # IMPORTANT pour sonar
 
-    - name: Installer Java
-      uses: actions/setup-java@v4
-      with:
-        distribution: "temurin"
-        java-version: "17"
+      - name: Installer Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: "temurin"
+          java-version: "17"
 
-    - name: Scanner SonarCloud
-      uses: SonarSource/sonarcloud-github-action@master
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      with:
-        args: >
-          -Dsonar.projectKey=DhekraBalbouli_Educhat_Project_DEVOPS
-          -Dsonar.organization=dhekrabalbouli
+      - name: Scanner SonarCloud
+        uses: SonarSource/sonarcloud-github-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          args: >
+            -Dsonar.projectKey=DhekraBalbouli_Educhat_Project_DEVOPS
+            -Dsonar.organization=dhekrabalbouli
