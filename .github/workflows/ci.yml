@@ -251,6 +251,11 @@ jobs:
     needs: qualite-code
 
     steps:
+      - name: Installer les dépendances
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pytest pytest-cov
       - name: Récupérer le code
         uses: actions/checkout@v4
         with:
