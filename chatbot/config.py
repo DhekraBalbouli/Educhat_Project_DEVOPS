@@ -5,13 +5,14 @@ Extrait de mon_chatbot.py — rien n'est modifié, juste centralisé.
 """
  
 import os
+import shutil
 from pathlib import Path
  
 #  Chemins ───────────────────────────────────────────────────────────────────
 BASE_DIR   = Path(__file__).resolve().parent.parent
-YAML_PATH  = BASE_DIR / "corpus" / "langages.yml"
-STATIC_DIR = BASE_DIR / "static"
- 
+NODE_PATH  = shutil.which("node") or ""   # → /usr/bin/node sur Linux
+MINGW_PATH = shutil.which("gcc")  or ""   # → /usr/bin/gcc  sur Linux
+
 # ─ Compilateurs (identiques à mon_chatbot.py) ────────────────────────────────
 NODE_PATH  = r"C:\Program Files\nodejs\node.exe"
 MINGW_PATH = r"C:\MinGW\bin"
