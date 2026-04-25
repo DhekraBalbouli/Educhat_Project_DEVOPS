@@ -255,7 +255,9 @@ jobs:
         run: |
           pip install --upgrade pip
           pip install pytest pytest-cov
-          pip install -r requirements.txt 
+          pip install fastapi uvicorn[standard] pydantic pyyaml spacy \
+                chatterbot chatterbot-corpus pyspellchecker rapidfuzz \
+                requests  httpx 
       
       - name: Télécharger modèle spaCy
         run: |
