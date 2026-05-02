@@ -1,35 +1,24 @@
 # ═══════════════════════════════════════════════════════════════════
 # CI — EduChat
-#
-#  Pipeline structuré en 5 jobs séquentiels :
-#
 #   job-1 : syntax-check      → py_compile + node --check
 #   job-2 : code-quality      → black + flake8 + radon
 #   job-3 : unit-tests        → pytest (tests unitaires) + coverage HTML
 #   job-4 : integration-tests → pytest (API FastAPI) + coverage globale
 #   job-5 : sonar             → SonarCloud scan
-#
-#  Chaque job réutilise des "composite actions" locales pour éviter
-#  la répétition des étapes d'installation.
 # ═══════════════════════════════════════════════════════════════════
 
 name: CI — EduChat
 
-# ── Déclencheurs ─────────────────────────────────────────────────────────────
 on:
   push:
     branches: [main, dev]
   pull_request:
     branches: [main, develop]
 
-# ── Variables globales ────────────────────────────────────────────────────────
 env:
   PYTHON_VERSION: "3.11"
   NODE_VERSION: "20"
   PIP_CACHE_DIR: ~/.cache/pip
-
-# ── Actions composites réutilisables ─────────────────────────────────────────
-# (définies dans .github/actions/ mais inlinées ici via des steps nommés)
 
 # ═══════════════════════════════════════════════════════════════════
 # JOB 1 — VÉRIFICATION SYNTAXE
@@ -53,16 +42,16 @@ jobs:
         run: |
           echo "=== Python : fichiers racine ==="
           python -m py_compile main.py mon_chatbot.py
-          echo "✅ main.py, mon_chatbot.py"
+          echo " main.py, mon_chatbot.py"
 
           echo "=== Python : package chatbot/ ==="
-          for f in chatbot/*.py; do python -m py_compile "$f" && echo "✅ $f"; done
+          for f in chatbot/*.py; do python -m py_compile "$f" && echo "$f"; done
 
           echo "=== Python : package api/ ==="
-          for f in api/*.py; do python -m py_compile "$f" && echo "✅ $f"; done
+          for f in api/*.py; do python -m py_compile "$f" && echo " $f"; done
 
           echo "=== Python : dossier tests/ ==="
-          for f in tests/*.py; do python -m py_compile "$f" && echo "✅ $f"; done
+          for f in tests/*.py; do python -m py_compile "$f" && echo "$f"; done
 
       # ── JavaScript ───────────────────────────────────────────────
       - name: Setup Node.js ${{ env.NODE_VERSION }}
@@ -77,7 +66,7 @@ jobs:
           if [ -z "$JS_FILES" ]; then
             echo "ℹ️  Aucun fichier .js trouvé dans static/"
           else
-            for f in $JS_FILES; do node --check "$f" && echo "✅ $f"; done
+            for f in $JS_FILES; do node --check "$f" && echo "$f"; done
           fi
 
   # ═══════════════════════════════════════════════════════════════════
@@ -132,8 +121,7 @@ jobs:
   unit-tests:
     name: "③ Tests unitaires (pytest)"
     runs-on: ubuntu-latest
-    needs: syntax-check   # pas besoin d'attendre qualite-code
-
+    needs: syntax-check  
     steps:
       - uses: actions/checkout@v4
 
@@ -229,12 +217,12 @@ jobs:
   sonar:
     name: "⑤ Analyse SonarCloud"
     runs-on: ubuntu-latest
-    needs: [code-quality, integration-tests]   # attend qualité + tests complets
+    needs: [code-quality, integration-tests]  
 
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0   # requis par SonarCloud pour le blame
+          fetch-depth: 0   
 
       - name: Setup Java 17 (requis par le scanner Sonar)
         uses: actions/setup-java@v4
@@ -242,7 +230,6 @@ jobs:
           distribution: temurin
           java-version: "17"
 
-      # Récupérer le rapport de coverage produit par le job précédent
       - name: Télécharger coverage XML globale
         uses: actions/download-artifact@v4
         with:
