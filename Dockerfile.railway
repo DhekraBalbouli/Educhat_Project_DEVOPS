@@ -1,11 +1,3 @@
-# ═══════════════════════════════════════════════════════════════════
-# Dockerfile.railway — EduChat
-#
-#  Dockerfile combiné pour Railway :
-#  Backend FastAPI + fichiers statiques (HTML/CSS/JS)
-#  Railway utilise un seul conteneur → pas de Nginx séparé
-# ═══════════════════════════════════════════════════════════════════
-
 FROM python:3.11-slim AS builder
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
