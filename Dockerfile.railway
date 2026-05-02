@@ -1,0 +1,59 @@
+# ═══════════════════════════════════════════════════════════════════
+# Dockerfile.railway — EduChat
+#
+#  Dockerfile combiné pour Railway :
+#  Backend FastAPI + fichiers statiques (HTML/CSS/JS)
+#  Railway utilise un seul conteneur → pas de Nginx séparé
+# ═══════════════════════════════════════════════════════════════════
+
+FROM python:3.11-slim AS builder
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1
+
+WORKDIR /build
+
+COPY requirements.txt .
+
+RUN python -m venv /opt/venv && \
+    /opt/venv/bin/pip install --upgrade pip && \
+    /opt/venv/bin/pip install --no-cache-dir -r requirements.txt && \
+    /opt/venv/bin/python -m spacy download en_core_web_sm
+
+FROM python:3.11-slim AS runtime
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PATH="/opt/venv/bin:$PATH" \
+    PORT=8000 \
+    HOST=0.0.0.0 \
+    DB_PATH=/app/data/db.sqlite3
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        curl \
+        gcc \
+        build-essential \
+    && curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
+    && apt-get install -y --no-install-recommends nodejs \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+COPY --from=builder /opt/venv /opt/venv
+
+WORKDIR /app
+
+COPY main.py mon_chatbot.py ./
+COPY chatbot/ ./chatbot/
+COPY api/     ./api/
+# ✅ Inclut les fichiers statiques → FastAPI les sert directement
+COPY static/  ./static/
+COPY corpus/  ./corpus/
+
+RUN mkdir -p /app/data
+
+EXPOSE 8000
+
+CMD ["uvicorn", "main:app", \
+     "--host", "0.0.0.0", \
+     "--port", "8000", \
+     "--workers", "1", \
+     "--log-level", "info"]
