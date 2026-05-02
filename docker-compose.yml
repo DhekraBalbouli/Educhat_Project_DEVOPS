@@ -1,3 +1,7 @@
+# ═══════════════════════════════════════════════════════════════════
+# docker-compose.yml — EduChat
+# ═══════════════════════════════════════════════════════════════════
+
 services:
 
   # ── Données ────────────────────────────────────────────────────────
@@ -5,6 +9,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.db
+    # ✅ nom de l'image sur Docker Hub → docker compose push l'envoie ici
+    image: dhekrabalbouli/educhat-db:latest
     container_name: educhat-db
     volumes:
       - educhat_data:/data
@@ -16,6 +22,8 @@ services:
       context: .
       dockerfile: Dockerfile.backend
       target: runtime
+    # ✅ nom de l'image sur Docker Hub
+    image: dhekrabalbouli/educhat-backend:latest
     container_name: educhat-backend
     restart: unless-stopped
     depends_on:
@@ -45,6 +53,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.frontend
+    # ✅ nom de l'image sur Docker Hub
+    image: dhekrabalbouli/educhat-frontend:latest
     container_name: educhat-frontend
     restart: unless-stopped
     depends_on:
