@@ -1,0 +1,36 @@
+name: CD — EduChat
+
+on:
+  workflow_run:
+    workflows: ["CI — EduChat"]
+    types: [completed]
+    branches: [main]
+
+jobs:
+
+  build-push:
+    name: "⑥ Build & Push Docker Hub"
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Login Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build les 3 images
+        run: docker compose build
+
+      - name: Push les 3 images sur Docker Hub
+        run: docker compose push
+
+      - name: Résumé
+        run: |
+          echo "## 🐳 Images publiées sur Docker Hub" >> $GITHUB_STEP_SUMMARY
+          echo "- dhekrabalbouli/educhat-frontend:latest" >> $GITHUB_STEP_SUMMARY
+          echo "- dhekrabalbouli/educhat-backend:latest" >> $GITHUB_STEP_SUMMARY
+          echo "- dhekrabalbouli/educhat-db:latest" >> $GITHUB_STEP_SUMMARY
