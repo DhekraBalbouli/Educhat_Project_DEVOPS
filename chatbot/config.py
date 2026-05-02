@@ -13,7 +13,7 @@ YAML_PATH = BASE_DIR / "corpus" / "langages.yml"
 STATIC_DIR = BASE_DIR / "static"
 
 # ─ Compilateurs (identiques à mon_chatbot.py) ────────────────────────────────
-NODE_PATH = r"C:\Program Files\nodejs\node.exe"
+NODE_PATH = "node"
 MINGW_PATH = r"C:\MinGW\bin"
 
 # ── Serveur
