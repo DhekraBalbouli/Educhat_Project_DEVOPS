@@ -1,0 +1,57 @@
+services:
+
+  # ── Données ────────────────────────────────────────────────────────
+  db:
+    build:
+      context: .
+      dockerfile: Dockerfile.db
+    container_name: educhat-db
+    volumes:
+      - educhat_data:/data
+    restart: "no"
+
+  # ── Backend ────────────────────────────────────────────────────────
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+      target: runtime
+    container_name: educhat-backend
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_completed_successfully
+    environment:
+      HOST: "0.0.0.0"
+      PORT: "8000"
+      DB_PATH: "/app/data/db.sqlite3"
+    volumes:
+      - educhat_data:/app/data
+    expose:
+      - "8000"
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/langages')"
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+
+  # ── Frontend ───────────────────────────────────────────────────────
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    container_name: educhat-frontend
+    restart: unless-stopped
+    depends_on:
+      backend:
+        condition: service_healthy
+    ports:
+      - "80:80"
+
+volumes:
+  educhat_data:
