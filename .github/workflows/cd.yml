@@ -34,3 +34,50 @@ jobs:
           echo "- dhekrabalbouli/educhat-frontend:latest" >> $GITHUB_STEP_SUMMARY
           echo "- dhekrabalbouli/educhat-backend:latest" >> $GITHUB_STEP_SUMMARY
           echo "- dhekrabalbouli/educhat-db:latest" >> $GITHUB_STEP_SUMMARY
+  
+# ═══════════════════════════════════════════════════════════════════
+# JOB 2 — DÉPLOIEMENT SUR SELF-HOSTED RUNNER (Codespaces)
+# ═══════════════════════════════════════════════════════════════════
+  deploy:
+    name: "⑦ Déploiement (self-hosted runner)"
+    runs-on: self-hosted
+    needs: build-push
+ 
+    steps:
+      - uses: actions/checkout@v4
+ 
+      - name: Pull les nouvelles images depuis Docker Hub
+        run: docker compose pull
+ 
+      - name: Arrêter les anciens conteneurs
+        run: docker compose down --remove-orphans
+ 
+      - name: Lancer les nouveaux conteneurs
+        run: docker compose up -d
+ 
+      - name: Attendre le démarrage
+        run: sleep 30
+ 
+      - name: Vérifier backend
+        run: |
+          curl --fail --silent --max-time 10 \
+            http://localhost:8000/api/langages \
+            && echo "✅ Backend OK"
+ 
+      - name: Vérifier frontend
+        run: |
+          curl --fail --silent --max-time 10 \
+            http://localhost:80 | grep -q "<html" \
+            && echo "✅ Frontend OK"
+ 
+      - name: Logs en cas d'échec
+        if: failure()
+        run: docker compose logs
+ 
+      - name: Résumé déploiement
+        if: success()
+        run: |
+          echo "## 🚀 Site déployé sur Codespaces" >> $GITHUB_STEP_SUMMARY
+          echo "- Backend  ✅" >> $GITHUB_STEP_SUMMARY
+          echo "- Frontend ✅" >> $GITHUB_STEP_SUMMARY
+ 
