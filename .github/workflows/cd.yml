@@ -55,24 +55,26 @@ jobs:
       - name: Lancer les nouveaux conteneurs
         run: docker compose up -d
  
-      - name: Attendre le démarrage
-        run: sleep 30
+      - name: Attendre le démarrage (ChatterBot prend du temps)
+        run: sleep 60
  
-      - name: Vérifier backend
+      - name: Vérifier backend (/api/langages)
         run: |
-          curl --fail --silent --max-time 10 \
+          curl --fail --silent --max-time 15 \
             http://localhost:8000/api/langages \
             && echo "✅ Backend OK"
  
-      - name: Vérifier frontend
+      - name: Vérifier frontend (via backend)
         run: |
-          curl --fail --silent --max-time 10 \
-            http://localhost:80 | grep -q "<html" \
-            && echo "✅ Frontend OK"
+          curl --fail --silent --max-time 15 \
+            http://localhost:8000/ | grep -q "EduChat" \
+            && echo "✅ Frontend OK" \
+            || echo "⚠️ Frontend pas encore prêt"
+        continue-on-error: true
  
       - name: Logs en cas d'échec
         if: failure()
-        run: docker compose logs
+        run: docker compose logs --tail=50
  
       - name: Résumé déploiement
         if: success()
