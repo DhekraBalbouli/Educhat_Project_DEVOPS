@@ -35,8 +35,8 @@ services:
       DB_PATH: "/app/data/db.sqlite3"
     volumes:
       - educhat_data:/app/data
-    expose:
-      - "8000"
+    ports:
+      - "8000:8000"
     healthcheck:
       test:
         - CMD
