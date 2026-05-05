@@ -42,10 +42,12 @@ jobs:
     name: "⑦ Déploiement (self-hosted runner)"
     runs-on: self-hosted
     needs: build-push
+    # ✅ Toutes les commandes s'exécutent depuis le dossier du projet
+    defaults:
+      run:
+        working-directory: /workspaces/Educhat_Project_DEVOPS
  
     steps:
-      - uses: actions/checkout@v4
- 
       - name: Pull les nouvelles images depuis Docker Hub
         run: docker compose pull
  
@@ -64,10 +66,10 @@ jobs:
             http://localhost:8000/api/langages \
             && echo "✅ Backend OK"
  
-      - name: Vérifier frontend (via backend)
+      - name: Vérifier frontend (port 80)
         run: |
           curl --fail --silent --max-time 15 \
-            http://localhost:8000/ | grep -q "EduChat" \
+            http://localhost:80 | grep -q "<html" \
             && echo "✅ Frontend OK" \
             || echo "⚠️ Frontend pas encore prêt"
         continue-on-error: true
