@@ -60,5 +60,9 @@ jobs:
         run: |
           echo "## 🚀 Site déployé sur Codespaces" >> $GITHUB_STEP_SUMMARY
           echo "- docker compose up -d ✅" >> $GITHUB_STEP_SUMMARY
+      - name: 🌍 Lien EduChat déployé
+        run: |
+          echo "EduChat est déployé avec succès !" >> $GITHUB_STEP_SUMMARY
+          echo "👉 https://friendly-space-yodel-7vjvpg65pwrg3r7v-80.app.github.dev/" >> $GITHUB_STEP_SUMMARY
           
  
