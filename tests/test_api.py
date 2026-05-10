@@ -2,6 +2,12 @@
 On utilise TestClient qui simule de vraies requêtes HTTP
 sans avoir besoin de démarrer le serveur.
 
+200 → OK, tout va bien
+404 → introuvable (langage inexistant)
+422 → données manquantes ou invalides
+400 → mauvaise requête
+500 → crash serveur (à éviter absolument)
+
 Pour chaque route on vérifie :
   - Le code HTTP (200, 404, 422...)
   - Que la réponse contient les bonnes clés
@@ -11,7 +17,6 @@ Pour chaque route on vérifie :
 from fastapi.testclient import TestClient
 from main import app
 
-# Un seul client pour tous les tests de ce fichier
 client = TestClient(app)
 
 

@@ -1,12 +1,3 @@
-# ═══════════════════════════════════════════════════════════════════
-# CI — EduChat
-#   job-1 : syntax-check      → py_compile + node --check
-#   job-2 : code-quality      → black + flake8 + radon
-#   job-3 : unit-tests        → pytest (tests unitaires) + coverage HTML
-#   job-4 : integration-tests → pytest (API FastAPI) + coverage globale
-#   job-5 : sonar             → SonarCloud scan
-# ═══════════════════════════════════════════════════════════════════
-
 name: CI — EduChat
 
 on:

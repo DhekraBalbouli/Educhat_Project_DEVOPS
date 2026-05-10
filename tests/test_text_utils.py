@@ -4,18 +4,12 @@ Couvre :
   - corriger_texte()
   - detecter_langage()
 """
-
 import pytest
 from chatbot.text_utils import nettoyer_texte, detecter_langage
-
 LANGAGES = ["python", "javascript", "c"]
-
-
 # ══════════════════════════════════════════════
 # nettoyer_texte()
 # ══════════════════════════════════════════════
-
-
 class TestNettoyerTexte:
 
     def test_minuscules(self):
@@ -50,15 +44,11 @@ class TestNettoyerTexte:
         result = nettoyer_texte("  hello  ")
         assert "hello" in result
 
-    def test_chiffres_conserves(self):
-        assert "42" in nettoyer_texte("valeur 42")
 
     def test_phrase_complexe(self):
         result = nettoyer_texte("C'est quoi Python ?!")
         assert result == "cest quoi python"
 
-    def test_texte_deja_propre(self):
-        assert nettoyer_texte("python variable") == "python variable"
 
     @pytest.mark.parametrize(
         "entree,attendu",

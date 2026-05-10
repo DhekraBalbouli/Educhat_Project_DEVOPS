@@ -42,6 +42,9 @@ jobs:
     name: "⑦ Déploiement (self-hosted runner)"
     runs-on: self-hosted
     needs: build-push
+    environment:
+      name: staging
+      url: https://friendly-space-yodel-7vjvpg65pwrg3r7v-80.app.github.dev/
     defaults:
       run:
         working-directory: /workspaces/Educhat_Project_DEVOPS
@@ -64,5 +67,46 @@ jobs:
         run: |
           echo "EduChat est déployé avec succès !" >> $GITHUB_STEP_SUMMARY
           echo "👉 https://friendly-space-yodel-7vjvpg65pwrg3r7v-80.app.github.dev/" >> $GITHUB_STEP_SUMMARY
-          
- 
+
+performance:
+    name: "⑧ Tests de performance (Sitespeed.io)"
+    runs-on: ubuntu-latest
+    needs: deploy
+    
+    steps:
+      - name: Attendre que l'application soit disponible
+        run: |
+          URL="https://friendly-space-yodel-7vjvpg65pwrg3r7v-80.app.github.dev/"
+          for i in $(seq 1 30); do
+            STATUS=$(curl -k -s -o /dev/null -w "%{http_code}" "$URL" || true)
+            if [ "$STATUS" = "200" ]; then
+              echo "✅ Application disponible !"
+              break
+            fi
+            echo "Tentative $i/30..."
+            sleep 10
+          done
+
+      - name: Créer le dossier de résultats
+        run: mkdir -p sitespeed-results
+
+      - name: Lancer Sitespeed.io
+        run: |
+          docker run --rm --shm-size=1g \
+            -v "$(pwd):/sitespeed.io" \
+            sitespeedio/sitespeed.io:latest \
+            --outputFolder sitespeed-results \
+            "https://friendly-space-yodel-7vjvpg65pwrg3r7v-80.app.github.dev/"
+
+      - name: Sauvegarder les résultats
+        uses: actions/upload-artifact@v4
+        with:
+          name: sitespeed-results
+          path: sitespeed-results/
+          retention-days: 7
+
+      - name: Résumé performance
+        run: |
+          echo "## ⚡ Tests de performance terminés" >> $GITHUB_STEP_SUMMARY
+          echo "- Sitespeed.io ✅" >> $GITHUB_STEP_SUMMARY
+          echo "- Résultats disponibles dans les artifacts" >> $GITHUB_STEP_SUMMARY

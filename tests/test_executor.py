@@ -12,8 +12,6 @@ from chatbot.executor import executer_et_capturer_sortie
 # ══════════════════════════════════════════════
 # Python
 # ══════════════════════════════════════════════
-
-
 class TestExecutionPython:
 
     def test_hello_world(self):
@@ -78,13 +76,9 @@ class TestExecutionPython:
         sortie = executer_et_capturer_sortie("print('ok')", "Python")
         # Selon l'implémentation, soit ça marche, soit retourne non supporté
         assert isinstance(sortie, str)
-
-
 # ══════════════════════════════════════════════
-# JavaScript (mocké car Node.js peut être absent)
+# JavaScript 
 # ══════════════════════════════════════════════
-
-
 class TestExecutionJavaScript:
 
     def test_hello_world_mocke(self):
@@ -125,13 +119,9 @@ class TestExecutionJavaScript:
         with patch("subprocess.run", return_value=mock_result):
             sortie = executer_et_capturer_sortie("let x = 5;", "javascript")
         assert "aucune" in sortie.lower() or sortie == ""
-
-
 # ══════════════════════════════════════════════
 # C (mocké car GCC peut être absent)
 # ══════════════════════════════════════════════
-
-
 class TestExecutionC:
 
     def test_hello_world_c_mocke(self):
@@ -153,13 +143,9 @@ class TestExecutionC:
         with patch("subprocess.run", side_effect=FileNotFoundError("gcc not found")):
             sortie = executer_et_capturer_sortie("int main(){return 0;}", "c")
         assert "introuvable" in sortie.lower() or "gcc" in sortie.lower()
-
-
 # ══════════════════════════════════════════════
 # Dispatcher — langage non supporté
 # ══════════════════════════════════════════════
-
-
 class TestDispatcher:
 
     def test_langage_inconnu(self):

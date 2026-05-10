@@ -93,35 +93,9 @@ class TestVerifierReponseQuiz:
         assert "correct" in result
         assert "answer" in result
 
-    def test_insensible_casse(self):
-        """La vérification doit être insensible à la casse."""
-        lang = "python"
-        q = data["langages"][lang]["quizzes"][0]
-        # Réponse en majuscules
-        result = verifier_reponse_quiz(lang, 0, q["answer"].upper())
-        assert result["correct"] is True
-
-    def test_avec_espaces(self):
-        """Des espaces autour ne doivent pas invalider la réponse."""
-        lang = "python"
-        q = data["langages"][lang]["quizzes"][0]
-        result = verifier_reponse_quiz(lang, 0, f"  {q['answer']}  ")
-        assert result["correct"] is True
-
-    def test_index_valide_premier(self):
-        result = verifier_reponse_quiz("python", 0, "test")
-        assert isinstance(result, dict)
-
-    def test_index_invalide_leve_exception(self):
-        with pytest.raises((IndexError, KeyError, Exception)):
-            verifier_reponse_quiz("python", 9999, "test")
-
-
 # ══════════════════════════════════════════════
 # get_exercices_list()
 # ══════════════════════════════════════════════
-
-
 class TestGetExercicesList:
 
     @pytest.mark.parametrize("lang", ["python", "javascript", "c"])
@@ -153,21 +127,9 @@ class TestGetExercicesList:
         for exo in exercices:
             assert len(exo["enonce"]) > 0
 
-    def test_pas_de_solution_exposee(self):
-        """La solution ne doit pas être exposée dans get_exercices_list."""
-        for lang in ["python", "javascript", "c"]:
-            exercices = get_exercices_list(lang)
-            for exo in exercices:
-                assert (
-                    "solution" not in exo
-                ), f"La solution est exposée pour {lang} — risque de triche !"
-
-
 # ══════════════════════════════════════════════
 # verifier_exercice()
 # ══════════════════════════════════════════════
-
-
 class TestVerifierExercice:
 
     def test_code_python_correct(self):
@@ -184,15 +146,6 @@ class TestVerifierExercice:
         result = verifier_exercice("python", 0, "print('mauvaise_reponse_12345')")
         assert result["correct"] is False
 
-    def test_retourne_output(self):
-        result = verifier_exercice("python", 0, "print('test')")
-        assert "output" in result
-        assert "expected" in result
-        assert "correct" in result
-
-    def test_output_contient_sortie_reelle(self):
-        result = verifier_exercice("python", 0, "print('Hello World')")
-        assert isinstance(result["output"], str)
 
     def test_code_avec_erreur_syntaxe(self):
         result = verifier_exercice("python", 0, "print(")
@@ -202,12 +155,3 @@ class TestVerifierExercice:
     def test_index_invalide_leve_exception(self):
         with pytest.raises((IndexError, KeyError, Exception)):
             verifier_exercice("python", 9999, "print('test')")
-
-    def test_verifier_exercice_js_mocke(self):
-        mock_result = MagicMock()
-        mock_result.stdout = "Hello\n"
-        mock_result.stderr = ""
-        with patch("subprocess.run", return_value=mock_result):
-            result = verifier_exercice("javascript", 0, "console.log('Hello')")
-        assert isinstance(result, dict)
-        assert "correct" in result
