@@ -119,7 +119,7 @@ jobs:
     needs: performance
     environment:
       name: production
-      url: educhatprojectdevops-production.up.railway.app
+      url: https://educhatprojectdevops-production.up.railway.app
 
     steps:
       - uses: actions/checkout@v4
@@ -128,7 +128,12 @@ jobs:
         run: npm install -g @railway/cli
 
       - name: Déployer sur Railway
-        run: railway up --project 09ba20de-32a6-483d-aacc-d8a5fe90d824
+        run: |
+          railway up \
+            --project 09ba20de-32a6-483d-aacc-d8a5fe90d824 \
+            --environment 7b811d61-ec10-4b90-8ea8-e38549534dbd \
+            --service 7a0e24ed-b716-4926-b577-e3d306ebe3e6 \
+            --detach
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
 
@@ -136,4 +141,4 @@ jobs:
         run: |
           echo "## 🏭 Déployé en production sur Railway !" >> $GITHUB_STEP_SUMMARY
           echo "- Projet ID: 09ba20de-32a6-483d-aacc-d8a5fe90d824 ✅" >> $GITHUB_STEP_SUMMARY
-          echo "- 👉 https://educhat-production.up.railway.app" >> $GITHUB_STEP_SUMMARY
+          echo "- 👉 https://educhatprojectdevops-production.up.railway.app" >> $GITHUB_STEP_SUMMARY
