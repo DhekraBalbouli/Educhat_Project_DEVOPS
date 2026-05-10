@@ -111,35 +111,3 @@ jobs:
             echo "## ⚡ Tests de performance terminés" >> $GITHUB_STEP_SUMMARY
             echo "- Sitespeed.io ✅" >> $GITHUB_STEP_SUMMARY
             echo "- Résultats disponibles dans les artifacts" >> $GITHUB_STEP_SUMMARY
-# ═══════════════════════════════════════════════════════════════════
-# JOB 4 — DÉPLOIEMENT PRODUCTION (Railway)
-# ═══════════════════════════════════════════════════════════════════
-  deploy-production:
-    name: "⑨ Déploiement Production (Railway)"
-    runs-on: ubuntu-latest
-    needs: performance
-    environment:
-      name: production
-      url: https://educhatprojectdevops-production.up.railway.app
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Installer Railway CLI
-        run: npm install -g @railway/cli
-
-      - name: Déployer sur Railway
-        run: |
-          railway up \
-            --project 09ba20de-32a6-483d-aacc-d8a5fe90d824 \
-            --environment 7b811d61-ec10-4b90-8ea8-e38549534dbd \
-            --service 7a0e24ed-b716-4926-b577-e3d306ebe3e6 \
-            --detach
-        env:
-          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
-
-      - name: Résumé production
-        run: |
-          echo "## 🏭 Déployé en production sur Railway !" >> $GITHUB_STEP_SUMMARY
-          echo "- Projet ID: 09ba20de-32a6-483d-aacc-d8a5fe90d824 ✅" >> $GITHUB_STEP_SUMMARY
-          echo "- 👉 https://educhatprojectdevops-production.up.railway.app" >> $GITHUB_STEP_SUMMARY
