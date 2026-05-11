@@ -15,6 +15,7 @@ from api.chat import router as chat_router
 from api.quiz import router as quiz_router
 from api.exercices import router as exercices_router
 from api.execute import router as execute_router
+from prometheus_fastapi_instrumentator import Instrumentator 
 
 # ── App ───────────────────────────────────────────────────────────────────────
 app = FastAPI(title="EduChat API", version="1.0.0")
@@ -51,6 +52,7 @@ async def root():
         return html.read_text(encoding="utf-8")
     return HTMLResponse("<h1>EduChat API</h1><p>Placez index.html dans /static</p>")
 
+Instrumentator().instrument(app).expose(app)
 
 # Lancement
 if __name__ == "__main__":
