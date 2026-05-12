@@ -236,3 +236,5 @@ jobs:
             -Dsonar.projectKey=DhekraBalbouli_Educhat_Project_DEVOPS
             -Dsonar.organization=dhekrabalbouli
             -Dsonar.python.coverage.reportPaths=coverage-global.xml
+
+            
